@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Napas - IPAS Kelas 6 SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Fredoka & Plus Jakarta Sans for friendly look) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sky: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        },
+                        freshGreen: {
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        sunnyYellow: '#fde047',
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .heading-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Animated SVG elements */
+        .lung-left, .lung-right {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), fill 0.8s ease;
+            transform-origin: center center;
+        }
+
+        .ribs-group {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top center;
+        }
+
+        .diaphragm-path {
+            transition: d 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.8s ease;
+        }
+
+        .air-arrow {
+            stroke-dasharray: 8, 8;
+            animation: dashMove 1.5s linear infinite;
+        }
+
+        .air-arrow-reverse {
+            stroke-dasharray: 8, 8;
+            animation: dashMoveReverse 1.5s linear infinite;
+        }
+
+        @keyframes dashMove {
+            to { stroke-dashoffset: -32; }
+        }
+
+        @keyframes dashMoveReverse {
+            to { stroke-dashoffset: 32; }
+        }
+
+        /* Pulse effects */
+        .pulse-card {
+            animation: softPulse 2s infinite alternate;
+        }
+
+        @keyframes softPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        /* Flowchart Active State Glow */
+        .flow-step-active {
+            border-color: #0284c7 !important;
+            background-color: #e0f2fe !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(14, 165, 233, 0.3);
+        }
+
+        /* Glassmorphism effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38bdf8;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-12">
+
+    <header class="sticky top-0 z-50 glass-card shadow-sm border-b border-sky-100">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-gradient-to-tr from-sky-500 to-teal-400 rounded-2xl flex items-center justify-center text-white shadow-md shadow-sky-200">
+                    <i class="fa-solid font-bold fa-wind text-xl"></i>
+                </div>
+                <div>
+                    <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">IPAS Kelas 6 SD</span>
+                    <h1 class="heading-font text-lg md:text-xl font-bold text-slate-800 leading-tight">Petualangan Napas</h1>
+                </div>
+            </div>
+            
+            <button id="audioToggleBtn" onclick="toggleAudioSpeech()" class="flex items-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm transition-all border border-emerald-200">
+                <i class="fa-solid fa-volume-high text-emerald-600"></i>
+                <span id="audioBtnText" class="hidden sm:inline">Suara: AKTIF</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+
+        <!-- TUJUAN PEMBELAJARAN & RUMUS CEPAT -->
+        <section class="glass-card rounded-3xl p-5 md:p-6 shadow-xl shadow-sky-100/50 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-sky-200 rounded-full blur-2xl opacity-50"></div>
+            
+            <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between relative z-10">
+                <div class="space-y-2 flex-1">
+                    <div class="flex items-center gap-2 text-sky-600 font-bold text-sm">
+                        <i class="fa-solid fa-bullseye text-base"></i>
+                        <span>TUJUAN PEMBELAJARAN</span>
+                    </div>
+                    <p class="text-slate-700 text-sm md:text-base leading-relaxed font-medium">
+                        "Peserta didik mampu menjelaskan proses masuk dan keluarnya udara melalui mekanisme <span class="text-sky-600 font-bold">inspirasi</span> dan <span class="text-teal-600 font-bold">ekspirasi</span> serta menjelaskan mekanisme <span class="text-indigo-600 font-bold">pernapasan dada</span> dan <span class="text-emerald-600 font-bold">pernapasan perut</span>."
+                    </p>
+                </div>
+
+                <!-- RUMUS CEPAT BOX -->
+                <div class="w-full md:w-auto bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-2xl p-4 shadow-md shrink-0">
+                    <div class="text-xs uppercase tracking-wider font-bold text-sky-100 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt text-yellow-300"></i> Rumus Cepat
+                    </div>
+                    <div class="space-y-1 text-sm font-semibold">
+                        <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg">
+                            <span class="text-lg">🌬️</span>
+                            <span>Inspirasi = <strong class="text-yellow-300">Udara Masuk</strong></span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg">
+                            <span class="text-lg">💨</span>
+                            <span>Ekspirasi = <strong class="text-teal-200">Udara Keluar</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGASI TAB UTAMA -->
+        <section class="bg-slate-200/80 p-1.5 rounded-2xl flex gap-2">
+            <button id="tabChest" onclick="switchTab('chest')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm md:text-base transition-all flex items-center justify-center gap-2 bg-white text-sky-600 shadow-md">
+                <span class="text-xl">🫁</span>
+                <span>Pernapasan Dada</span>
+            </button>
+            <button id="tabAbdomen" onclick="switchTab('abdomen')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm md:text-base transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800">
+                <span class="text-xl">💪</span>
+                <span>Pernapasan Perut</span>
+            </button>
+        </section>
+
+        <!-- MODUL SIMULASI INTERAKTIF -->
+        <section class="glass-card rounded-3xl p-5 md:p-6 shadow-xl shadow-sky-100/50">
+            <!-- Header Mode Information -->
+            <div id="simHeader" class="text-center mb-4">
+                <span id="tabBadge" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    Fokus: Otot Antartulang Rusuk & Tulang Rusuk
+                </span>
+                <h2 id="tabTitle" class="heading-font text-2xl md:text-3xl font-extrabold text-slate-800 mt-2">
+                    Simulasi Pernapasan Dada
+                </h2>
+                <p id="tabDesc" class="text-slate-600 text-xs md:text-sm max-w-xl mx-auto mt-1">
+                    Perhatikan gerakan tulang rusuk dan perubahan ukuran rongga dada saat menarik napas dan menghembuskan napas.
+                </p>
+            </div>
+
+            <!-- ACTION CONTROLS BUTTONS -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
+                <button id="btnInhale" onclick="triggerState('inhale')" class="flex-1 sm:flex-initial min-w-[140px] bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-bold py-3 px-5 rounded-2xl shadow-lg shadow-sky-200 transition-all flex items-center justify-center gap-2 border-2 border-sky-300">
+                    <span class="text-xl">🌬️</span>
+                    <span>Tarik Napas (Inspirasi)</span>
+                </button>
+                <button id="btnExhale" onclick="triggerState('exhale')" class="flex-1 sm:flex-initial min-w-[140px] bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold py-3 px-5 rounded-2xl transition-all flex items-center justify-center gap-2 border-2 border-slate-200">
+                    <span class="text-xl">💨</span>
+                    <span>Hembuskan (Ekspirasi)</span>
+                </button>
+                <button id="btnAutoPlay" onclick="toggleAutoPlay()" class="w-full sm:w-auto bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-3 px-4 rounded-2xl border border-amber-300 transition-all flex items-center justify-center gap-2">
+                    <i id="autoPlayIcon" class="fa-solid fa-play text-amber-600"></i>
+                    <span id="autoPlayText">Otomatis Loop</span>
+                </button>
+            </div>
+
+            <!-- SIMULATION DISPLAY AREA (SVG + STATUS) -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                
+                <!-- SVG VISUALIZER -->
+                <div class="md:col-span-6 bg-gradient-to-b from-sky-50 to-white rounded-3xl p-4 border-2 border-sky-100 relative overflow-hidden flex flex-col items-center justify-center min-h-[340px]">
+                    
+                    <!-- Dynamic Status Indicator Tag -->
+                    <div id="statusTag" class="absolute top-3 left-3 bg-sky-500 text-white font-bold text-xs px-3 py-1 rounded-full shadow-md flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                        <span id="statusText">Inspirasi: Udara Masuk</span>
+                    </div>
+
+                    <!-- Voice Narrator Button for Kids -->
+                    <button onclick="speakCurrentState()" class="absolute top-3 right-3 bg-white text-sky-600 hover:bg-sky-50 p-2 rounded-full shadow border border-sky-200 text-xs font-bold" title="Dengarkan Penjelasan">
+                        <i class="fa-solid fa-volume-high text-sm"></i>
+                    </button>
+
+                    <!-- SVG Respiratory System Diagram -->
+                    <svg viewBox="0 0 300 320" class="w-full max-w-[280px] h-auto drop-shadow-md">
+                        <defs>
+                            <!-- Linear Gradients for Realism -->
+                            <linearGradient id="tracheaGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#cbd5e1"/>
+                                <stop offset="50%" stop-color="#f8fafc"/>
+                                <stop offset="100%" stop-color="#cbd5e1"/>
+                            </linearGradient>
+
+                            <linearGradient id="lungInhaleGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#ff7676"/>
+                                <stop offset="100%" stop-color="#e11d48"/>
+                            </linearGradient>
+
+                            <linearGradient id="lungExhaleGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#fca5a5"/>
+                                <stop offset="100%" stop-color="#f43f5e"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Head & Nose Outline -->
+                        <path d="M 150,15 C 165,15 175,25 175,40 C 175,48 178,52 185,55 C 182,58 172,60 170,68 C 168,75 160,82 150,82 C 140,82 135,75 135,65" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="160" cy="45" r="3" fill="#64748b"/> <!-- Eye -->
+
+                        <!-- Air Flow Path Lines (In nose, down trachea) -->
+                        <g id="airFlowGroup">
+                            <path id="airPath" d="M 180,57 C 168,58 152,65 150,80 L 150,150" fill="none" stroke="#0284c7" stroke-width="4" stroke-linecap="round" class="air-arrow"/>
+                        </g>
+
+                        <!-- Trachea (Tenggorokan) -->
+                        <rect x="144" y="80" width="12" height="70" rx="3" fill="url(#tracheaGrad)" stroke="#94a3b8" stroke-width="1.5"/>
+                        <!-- Trachea rings -->
+                        <line x1="144" y1="90" x2="156" y2="90" stroke="#cbd5e1" stroke-width="1.5"/>
+                        <line x1="144" y1="102" x2="156" y2="102" stroke="#cbd5e1" stroke-width="1.5"/>
+                        <line x1="144" y1="114" x2="156" y2="114" stroke="#cbd5e1" stroke-width="1.5"/>
+                        <line x1="144" y1="126" x2="156" y2="126" stroke="#cbd5e1" stroke-width="1.5"/>
+                        <line x1="144" y1="138" x2="156" y2="138" stroke="#cbd5e1" stroke-width="1.5"/>
+
+                        <!-- Chest Cavity Outline Background -->
+                        <path d="M 110,130 Q 150,120 190,130 C 220,160 220,240 190,260 Q 150,270 110,260 C 80,240 80,160 110,130 Z" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
+
+                        <!-- Left & Right Lungs -->
+                        <!-- Left Lung (Viewer Right) -->
+                        <path id="lungLeft" class="lung-left" d="M 152,145 Q 195,150 195,200 C 195,240 160,250 152,245 Z" fill="url(#lungInhaleGrad)" opacity="0.9"/>
+                        <!-- Right Lung (Viewer Left) -->
+                        <path id="lungRight" class="lung-right" d="M 148,145 Q 105,150 105,200 C 105,240 140,250 148,245 Z" fill="url(#lungInhaleGrad)" opacity="0.9"/>
+
+                        <!-- Ribs (Tulang Rusuk) - Tab 1 Focus -->
+                        <g id="ribsGroup" class="ribs-group">
+                            <path d="M 148,135 Q 110,145 92,165" fill="none" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M 152,135 Q 190,145 208,165" fill="none" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/>
+                            
+                            <path d="M 148,155 Q 102,168 88,192" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M 152,155 Q 198,168 212,192" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+
+                            <path d="M 148,175 Q 98,190 86,218" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M 152,175 Q 202,190 214,218" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+
+                            <path d="M 148,195 Q 100,212 90,240" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M 152,195 Q 200,212 210,240" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                        </g>
+
+                        <!-- Diaphragm Line (Otot Diafragma) - Tab 2 Focus -->
+                        <path id="diaphragmPath" class="diaphragm-path" d="M 85,260 Q 150,250 215,260" fill="none" stroke="#22c55e" stroke-width="8" stroke-linecap="round"/>
+
+                        <!-- ANNOTATIONS & LABELS FOR ORGANS -->
+                        <!-- Label: Tenggorokan -->
+                        <g opacity="0.8">
+                            <line x1="150" y1="105" x2="55" y2="105" stroke="#64748b" stroke-width="1.5" stroke-dasharray="2,2"/>
+                            <circle cx="150" cy="105" r="3" fill="#64748b"/>
+                            <rect x="12" y="94" width="78" height="22" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                            <text x="51" y="109" font-size="9" font-weight="bold" fill="#475569" text-anchor="middle">Tenggorokan</text>
+                        </g>
+
+                        <!-- Label: Tulang Rusuk (Ribs) -->
+                        <g id="labelRibsGroup" class="transition-all duration-300">
+                            <line x1="210" y1="185" x2="242" y2="185" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="2,2"/>
+                            <circle cx="210" cy="185" r="3.5" fill="#0284c7"/>
+                            <rect id="badgeRibs" x="218" y="172" width="78" height="24" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+                            <text id="textRibs" x="257" y="188" font-size="9.5" font-weight="bold" fill="#0369a1" text-anchor="middle">🦴 Tulang Rusuk</text>
+                        </g>
+
+                        <!-- Label: Paru-Paru -->
+                        <g opacity="0.8">
+                            <line x1="175" y1="210" x2="55" y2="210" stroke="#e11d48" stroke-width="1.5" stroke-dasharray="2,2"/>
+                            <circle cx="175" cy="210" r="3" fill="#e11d48"/>
+                            <rect x="18" y="199" width="70" height="22" rx="6" fill="#ffffff" stroke="#f43f5e" stroke-width="1"/>
+                            <text x="53" y="214" font-size="9" font-weight="bold" fill="#be123c" text-anchor="middle">🫁 Paru-Paru</text>
+                        </g>
+
+                        <!-- Label: Diafragma -->
+                        <g id="labelDiaGroup" class="transition-all duration-300">
+                            <line x1="150" y1="262" x2="150" y2="288" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="2,2"/>
+                            <circle cx="150" cy="262" r="3.5" fill="#16a34a"/>
+                            <rect id="badgeDia" x="110" y="285" width="80" height="24" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+                            <text id="textDia" x="150" y="301" font-size="9.5" font-weight="bold" fill="#15803d" text-anchor="middle">🟢 Diafragma</text>
+                        </g>
+
+                        <!-- Direction Arrows for Ribs or Diaphragm -->
+                        <!-- Upper arrows for chest rising -->
+                        <g id="ribArrows" class="transition-opacity duration-500">
+                            <path id="ribArrowLeft" d="M 82,180 L 76,165" stroke="#0284c7" stroke-width="3" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+                            <path id="ribArrowRight" d="M 218,180 L 224,165" stroke="#0284c7" stroke-width="3" marker-end="url(#arrowhead)" stroke-linecap="round"/>
+                        </g>
+
+                        <!-- Lower arrow for diaphragm movement -->
+                        <g id="diaphragmArrow" class="transition-opacity duration-500">
+                            <path id="diaArrowPath" d="M 150,252 L 150,272" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/>
+                            <polygon id="diaArrowHead" points="144,270 150,282 156,270" fill="#16a34a"/>
+                        </g>
+
+                        <!-- Marker Definitions -->
+                        <defs>
+                            <marker id="arrowhead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7"/>
+                            </marker>
+                        </defs>
+                    </svg>
+
+                    <!-- ORGAN IDENTIFICATION LEGEND -->
+                    <div class="mt-3 text-center text-xs font-semibold text-slate-600 bg-white/90 p-2.5 rounded-2xl border border-slate-200 shadow-sm w-full">
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Keterangan Bagian Gambar:</div>
+                        <div class="flex flex-wrap justify-center gap-3 text-xs">
+                            <span class="flex items-center gap-1"><strong class="text-sky-600">🦴 Tulang Rusuk:</strong> Lengkungan di samping dada</span>
+                            <span class="flex items-center gap-1"><strong class="text-emerald-600">🟢 Diafragma:</strong> Sekat lengkung di bawah dada</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center text-xs font-semibold text-slate-500">
+                        <span id="organFocusNote" class="bg-white/80 px-3 py-1 rounded-full border border-slate-200">
+                            💡 Otot Antartulang Rusuk Berkontraksi ➔ Rusuk Naik
+                        </span>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC FLOWCHART STEPS -->
+                <div class="md:col-span-6 space-y-3">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-sky-500"></i> Alur Perubahan Mekanisme:
+                    </h3>
+
+                    <div id="flowchartContainer" class="space-y-2.5">
+                        <!-- Step 1 -->
+                        <div id="step1" class="flow-step transition-all duration-300 p-3.5 rounded-2xl border-2 border-slate-200 bg-white flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 font-extrabold flex items-center justify-center shrink-0">1</div>
+                            <div>
+                                <h4 id="step1Title" class="font-bold text-slate-800 text-sm md:text-base">Otot Antartulang Rusuk Berkontraksi</h4>
+                                <p id="step1Desc" class="text-slate-500 text-xs">Otot di antara tulang rusuk mengetat dan bekerja.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div id="step2" class="flow-step transition-all duration-300 p-3.5 rounded-2xl border-2 border-slate-200 bg-white flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 font-extrabold flex items-center justify-center shrink-0">2</div>
+                            <div>
+                                <h4 id="step2Title" class="font-bold text-slate-800 text-sm md:text-base">Tulang Rusuk Terangkat</h4>
+                                <p id="step2Desc" class="text-slate-500 text-xs">Sangkar dada bergerak naik ke atas dan ke luar.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div id="step3" class="flow-step transition-all duration-300 p-3.5 rounded-2xl border-2 border-slate-200 bg-white flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 font-extrabold flex items-center justify-center shrink-0">3</div>
+                            <div>
+                                <h4 id="step3Title" class="font-bold text-slate-800 text-sm md:text-base">Rongga Dada Membesar</h4>
+                                <p id="step3Desc" class="text-slate-500 text-xs">Tekanan di dalam dada mengecil dibanding luar.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div id="step4" class="flow-step transition-all duration-300 p-3.5 rounded-2xl border-2 border-slate-200 bg-white flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 font-extrabold flex items-center justify-center shrink-0">4</div>
+                            <div>
+                                <h4 id="step4Title" class="font-bold text-slate-800 text-sm md:text-base">Udara Masuk ke Paru-Paru</h4>
+                                <p id="step4Desc" class="text-slate-500 text-xs">Udara kaya oksigen terhirup masuk lewat hidung.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- RINGKASAN PERBANDINGAN SANGAT MUDAH -->
+        <section class="glass-card rounded-3xl p-5 md:p-6 shadow-xl shadow-sky-100/50">
+            <h3 class="heading-font text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <span>⚡ Rangkuman Singkat Mekanisme</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Chest Card -->
+                <div class="bg-sky-50/80 rounded-2xl p-4 border border-sky-200">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-2xl">🫁</span>
+                        <h4 class="font-bold text-sky-800 text-base">Pernapasan Dada</h4>
+                    </div>
+                    <ul class="text-xs md:text-sm space-y-2 text-slate-700">
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-circle-check text-sky-500 mt-0.5"></i>
+                            <span><strong>Pemeran Utama:</strong> Otot antar tulang rusuk.</span>
+                        </li>
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-arrow-right text-sky-400 mt-0.5"></i>
+                            <span><strong>Inspirasi:</strong> Tulang rusuk <b>terangkat</b> ➔ Dada <b>membesar</b> ➔ Udara <b>masuk</b>.</span>
+                        </li>
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-arrow-right text-sky-400 mt-0.5"></i>
+                            <span><strong>Ekspirasi:</strong> Tulang rusuk <b>turun</b> ➔ Dada <b>mengecil</b> ➔ Udara <b>keluar</b>.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Abdomen Card -->
+                <div class="bg-emerald-50/80 rounded-2xl p-4 border border-emerald-200">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-2xl">💪</span>
+                        <h4 class="font-bold text-emerald-800 text-base">Pernapasan Perut</h4>
+                    </div>
+                    <ul class="text-xs md:text-sm space-y-2 text-slate-700">
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i>
+                            <span><strong>Pemeran Utama:</strong> Otot diafragma (sekat dada & perut).</span>
+                        </li>
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-arrow-right text-emerald-400 mt-0.5"></i>
+                            <span><strong>Inspirasi:</strong> Diafragma <b>mendatar/turun</b> ➔ Dada <b>membesar</b> ➔ Udara <b>masuk</b>.</span>
+                        </li>
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-arrow-right text-emerald-400 mt-0.5"></i>
+                            <span><strong>Ekspirasi:</strong> Diafragma <b>melengkung/naik</b> ➔ Dada <b>mengecil</b> ➔ Udara <b>keluar</b>.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- KUIS INTERAKTIF (REFLEKSI PEMBELAJARAN) -->
+        <section class="glass-card rounded-3xl p-5 md:p-6 shadow-xl shadow-sky-100/50">
+            <div class="flex items-center justify-between mb-4 border-b pb-3 border-slate-100">
+                <div>
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase">Kuis Pemahaman</span>
+                    <h3 class="heading-font text-2xl font-extrabold text-slate-800 mt-1">Uji Masukan Napasmu! 🎯</h3>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-slate-500 font-semibold block">SKOR</span>
+                    <span id="quizScoreDisplay" class="heading-font text-2xl font-bold text-sky-600">0 / 3</span>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Container -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- Question 1 -->
+                <div class="quiz-card bg-white p-4 md:p-5 rounded-2xl border-2 border-slate-100 space-y-3">
+                    <p class="font-bold text-slate-800 text-sm md:text-base">
+                        1. Ketika kamu menarik napas dalam-dalam (Inspirasi), peristiwa apa yang terjadi pada udara?
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="checkAnswer(1, 'A', this)" class="opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all">
+                            A. Udara keluar dari paru-paru
+                        </button>
+                        <button onclick="checkAnswer(1, 'B', this)" class="opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all">
+                            B. Udara masuk ke dalam paru-paru
+                        </button>
+                    </div>
+                    <div id="feedback-1" class="hidden text-xs p-3 rounded-xl font-semibold"></div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-card bg-white p-4 md:p-5 rounded-2xl border-2 border-slate-100 space-y-3">
+                    <p class="font-bold text-slate-800 text-sm md:text-base">
+                        2. Pada pernapasan dada, apa yang terjadi pada tulang rusuk saat otot antartulang rusuk berkontraksi?
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="checkAnswer(2, 'A', this)" class="opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all">
+                            A. Tulang rusuk terangkat / naik
+                        </button>
+                        <button onclick="checkAnswer(2, 'B', this)" class="opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all">
+                            B. Tulang rusuk turun / relaksasi
+                        </button>
+                    </div>
+                    <div id="feedback-2" class="hidden text-xs p-3 rounded-xl font-semibold"></div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-card bg-white p-4 md:p-5 rounded-2xl border-2 border-slate-100 space-y-3">
+                    <p class="font-bold text-slate-800 text-sm md:text-base">
+                        3. Saat melakukan ekspirasi pada pernapasan perut, bagaimana posisi diafragma?
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="checkAnswer(3, 'A', this)" class="opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all">
+                            A. Mendatar / turun
+                        </button>
+                        <button onclick="checkAnswer(3, 'B', this)" class="opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all">
+                            B. Melengkung naik ke atas / relaksasi
+                        </button>
+                    </div>
+                    <div id="feedback-3" class="hidden text-xs p-3 rounded-xl font-semibold"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Result Banner -->
+            <div id="quizResultBox" class="hidden mt-6 bg-gradient-to-r from-teal-400 to-sky-500 text-white p-5 rounded-2xl text-center space-y-2 shadow-lg">
+                <div class="text-4xl">🎉</div>
+                <h4 class="heading-font text-2xl font-bold">Hebat Sekali! Petualangan Selesai!</h4>
+                <p id="resultText" class="text-sm">Kamu berhasil menjawab semua pertanyaan dengan sangat baik!</p>
+                <button onclick="resetQuiz()" class="mt-2 bg-white text-sky-700 hover:bg-slate-100 font-bold px-5 py-2 rounded-xl text-sm transition-all">
+                    Ulangi Kuis 🔄
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-500 font-medium py-4">
+        <p>Aplikasi Pembelajaran IPAS Kelas 6 SD • Media Interaktif Pernapasan Manusia</p>
+    </footer>
+
+    <script>
+        // APP STATE
+        let currentTab = 'chest'; // 'chest' or 'abdomen'
+        let currentState = 'inhale'; // 'inhale' or 'exhale'
+        let isAutoPlaying = false;
+        let autoPlayTimer = null;
+        let audioEnabled = true;
+
+        // QUIZ STATE
+        const quizAnswers = {
+            1: 'B', // Udara masuk
+            2: 'A', // Tulang rusuk terangkat
+            3: 'B'  // Melengkung naik
+        };
+        let userAnswers = {};
+        let score = 0;
+
+        // FLOWCHART DATA DEFINITION
+        const flowchartData = {
+            chest: {
+                inhale: [
+                    { title: "Otot Antartulang Rusuk Berkontraksi", desc: "Otot antartulang rusuk mengetat secara aktif." },
+                    { title: "Tulang Rusuk Terangkat", desc: "Sangkar dada bergerak terangkat ke atas." },
+                    { title: "Rongga Dada Membesar", desc: "Volume rongga dada meningkat, tekanan udara membesar." },
+                    { title: "Udara Masuk ke Paru-Paru", desc: "Udara kaya Oksigen (O₂) terhirup masuk." }
+                ],
+                exhale: [
+                    { title: "Otot Antartulang Rusuk Relaksasi", desc: "Otot antartulang rusuk mengendur kembali." },
+                    { title: "Tulang Rusuk Turun", desc: "Sangkar dada bergerak turun kembali ke posisi semula." },
+                    { title: "Rongga Dada Mengecil", desc: "Volume rongga dada berkurang/mengecil." },
+                    { title: "Udara Keluar dari Paru-Paru", desc: "Udara kaya Karbondioksida (CO₂) terdorong keluar." }
+                ]
+            },
+            abdomen: {
+                inhale: [
+                    { title: "Otot Diafragma Berkontraksi", desc: "Otot diafragma bekerja dan mengetat." },
+                    { title: "Diafragma Mendatar / Turun", desc: "Diafragma bergerak kebawah menjadi rata." },
+                    { title: "Rongga Dada Membesar", desc: "Volume rongga dada membesar secara vertikal." },
+                    { title: "Udara Masuk ke Paru-Paru", desc: "Udara kaya Oksigen (O₂) terhirup masuk." }
+                ],
+                exhale: [
+                    { title: "Otot Diafragma Relaksasi", desc: "Otot diafragma mengendur kembali." },
+                    { title: "Diafragma Melengkung / Naik", desc: "Diafragma kembali melengkung ke atas seperti kubah." },
+                    { title: "Rongga Dada Mengecil", desc: "Volume rongga dada mengecil." },
+                    { title: "Udara Keluar dari Paru-Paru", desc: "Udara kaya Karbondioksida (CO₂) terdorong keluar." }
+                ]
+            }
+        };
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const tabChestBtn = document.getElementById('tabChest');
+            const tabAbdomenBtn = document.getElementById('tabAbdomen');
+            const tabBadge = document.getElementById('tabBadge');
+            const tabTitle = document.getElementById('tabTitle');
+            const tabDesc = document.getElementById('tabDesc');
+            const ribArrows = document.getElementById('ribArrows');
+            const diaphragmArrow = document.getElementById('diaphragmArrow');
+
+            const badgeRibs = document.getElementById('badgeRibs');
+            const badgeDia = document.getElementById('badgeDia');
+            const textRibs = document.getElementById('textRibs');
+            const textDia = document.getElementById('textDia');
+
+            if (tab === 'chest') {
+                tabChestBtn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm md:text-base transition-all flex items-center justify-center gap-2 bg-white text-sky-600 shadow-md";
+                tabAbdomenBtn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm md:text-base transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800";
+                
+                tabBadge.className = "bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider";
+                tabBadge.textContent = "Fokus: Otot Antartulang Rusuk & Tulang Rusuk";
+                tabTitle.textContent = "Simulasi Pernapasan Dada";
+                tabDesc.textContent = "Perhatikan gerakan tulang rusuk dan perubahan ukuran rongga dada saat menarik dan menghembuskan napas.";
+                
+                ribArrows.style.opacity = "1";
+                diaphragmArrow.style.opacity = "0.3";
+
+                // Highlight Ribs badge in SVG
+                if (badgeRibs && badgeDia) {
+                    badgeRibs.setAttribute("fill", "#0284c7");
+                    badgeRibs.setAttribute("stroke", "#0369a1");
+                    badgeRibs.setAttribute("stroke-width", "2");
+                    if (textRibs) textRibs.setAttribute("fill", "#ffffff");
+
+                    badgeDia.setAttribute("fill", "#ffffff");
+                    badgeDia.setAttribute("stroke", "#cbd5e1");
+                    badgeDia.setAttribute("stroke-width", "1");
+                    if (textDia) textDia.setAttribute("fill", "#64748b");
+                }
+            } else {
+                tabAbdomenBtn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm md:text-base transition-all flex items-center justify-center gap-2 bg-white text-emerald-600 shadow-md";
+                tabChestBtn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm md:text-base transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800";
+                
+                tabBadge.className = "bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider";
+                tabBadge.textContent = "Fokus: Otot Diafragma";
+                tabTitle.textContent = "Simulasi Pernapasan Perut";
+                tabDesc.textContent = "Perhatikan posisi otot diafragma (sekat antara dada dan perut) saat menarik dan menghembuskan napas.";
+                
+                ribArrows.style.opacity = "0.3";
+                diaphragmArrow.style.opacity = "1";
+
+                // Highlight Diaphragm badge in SVG
+                if (badgeRibs && badgeDia) {
+                    badgeDia.setAttribute("fill", "#16a34a");
+                    badgeDia.setAttribute("stroke", "#15803d");
+                    badgeDia.setAttribute("stroke-width", "2");
+                    if (textDia) textDia.setAttribute("fill", "#ffffff");
+
+                    badgeRibs.setAttribute("fill", "#ffffff");
+                    badgeRibs.setAttribute("stroke", "#cbd5e1");
+                    badgeRibs.setAttribute("stroke-width", "1");
+                    if (textRibs) textRibs.setAttribute("fill", "#64748b");
+                }
+            }
+
+            updateSimulationVisuals();
+        }
+
+        function triggerState(state) {
+            currentState = state;
+            updateSimulationVisuals();
+            if (audioEnabled) {
+                speakCurrentState();
+            }
+        }
+
+        function updateSimulationVisuals() {
+            const btnInhale = document.getElementById('btnInhale');
+            const btnExhale = document.getElementById('btnExhale');
+            const statusTag = document.getElementById('statusTag');
+            const statusText = document.getElementById('statusText');
+            const organFocusNote = document.getElementById('organFocusNote');
+
+            const lungLeft = document.getElementById('lungLeft');
+            const lungRight = document.getElementById('lungRight');
+            const ribsGroup = document.getElementById('ribsGroup');
+            const diaphragmPath = document.getElementById('diaphragmPath');
+            const airPath = document.getElementById('airPath');
+
+            const ribArrowLeft = document.getElementById('ribArrowLeft');
+            const ribArrowRight = document.getElementById('ribArrowRight');
+            const diaArrowPath = document.getElementById('diaArrowPath');
+            const diaArrowHead = document.getElementById('diaArrowHead');
+
+            if (currentState === 'inhale') {
+                // Inhale Styling Buttons
+                btnInhale.className = "flex-1 sm:flex-initial min-w-[140px] bg-sky-500 text-white font-bold py-3 px-5 rounded-2xl shadow-lg shadow-sky-200 transition-all flex items-center justify-center gap-2 border-2 border-sky-300 scale-105";
+                btnExhale.className = "flex-1 sm:flex-initial min-w-[140px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-5 rounded-2xl transition-all flex items-center justify-center gap-2 border-2 border-slate-200";
+                
+                statusTag.className = "absolute top-3 left-3 bg-sky-500 text-white font-bold text-xs px-3 py-1 rounded-full shadow-md flex items-center gap-2";
+                statusText.textContent = "Inspirasi: Udara Masuk 🌬️";
+
+                // SVG Transforms for Inhale
+                lungLeft.style.transform = "scale(1.18)";
+                lungRight.style.transform = "scale(1.18)";
+                ribsGroup.style.transform = "translateY(-6px) scale(1.04)";
+
+                // Air direction arrow
+                airPath.className.baseVal = "air-arrow";
+                airPath.setAttribute("stroke", "#0284c7");
+
+                // Diaphragm is flattened / lowered
+                diaphragmPath.setAttribute("d", "M 85,272 Q 150,270 215,272");
+
+                // Arrow Directions
+                ribArrowLeft.setAttribute("d", "M 82,180 L 76,165");
+                ribArrowRight.setAttribute("d", "M 218,180 L 224,165");
+                
+                diaArrowPath.setAttribute("d", "M 150,252 L 150,272");
+                diaArrowHead.setAttribute("points", "144,270 150,282 156,270");
+
+                organFocusNote.textContent = currentTab === 'chest' 
+                    ? "💡 Otot Antartulang Rusuk Berkontraksi ➔ Tulang Rusuk Terangkat" 
+                    : "💡 Otot Diafragma Berkontraksi ➔ Diafragma Turun / Mendatar";
+
+            } else {
+                // Exhale Styling Buttons
+                btnExhale.className = "flex-1 sm:flex-initial min-w-[140px] bg-teal-600 text-white font-bold py-3 px-5 rounded-2xl shadow-lg shadow-teal-200 transition-all flex items-center justify-center gap-2 border-2 border-teal-400 scale-105";
+                btnInhale.className = "flex-1 sm:flex-initial min-w-[140px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-5 rounded-2xl transition-all flex items-center justify-center gap-2 border-2 border-slate-200";
+
+                statusTag.className = "absolute top-3 left-3 bg-teal-600 text-white font-bold text-xs px-3 py-1 rounded-full shadow-md flex items-center gap-2";
+                statusText.textContent = "Ekspirasi: Udara Keluar 💨";
+
+                // SVG Transforms for Exhale
+                lungLeft.style.transform = "scale(0.92)";
+                lungRight.style.transform = "scale(0.92)";
+                ribsGroup.style.transform = "translateY(0px) scale(0.98)";
+
+                // Air direction reverse arrow
+                airPath.className.baseVal = "air-arrow-reverse";
+                airPath.setAttribute("stroke", "#0d9488");
+
+                // Diaphragm curved up
+                diaphragmPath.setAttribute("d", "M 85,260 Q 150,230 215,260");
+
+                // Arrow Directions
+                ribArrowLeft.setAttribute("d", "M 76,165 L 82,180");
+                ribArrowRight.setAttribute("d", "M 224,165 L 218,180");
+
+                diaArrowPath.setAttribute("d", "M 150,272 L 150,252");
+                diaArrowHead.setAttribute("points", "144,254 150,242 156,254");
+
+                organFocusNote.textContent = currentTab === 'chest' 
+                    ? "💡 Otot Antartulang Rusuk Relaksasi ➔ Tulang Rusuk Turun" 
+                    : "💡 Otot Diafragma Relaksasi ➔ Diafragma Melengkung / Naik";
+            }
+
+            // Update Flowchart steps text & highlights
+            updateFlowchart();
+        }
+
+        function updateFlowchart() {
+            const stepsData = flowchartData[currentTab][currentState];
+
+            for (let i = 1; i <= 4; i++) {
+                const stepElem = document.getElementById(`step${i}`);
+                const titleElem = document.getElementById(`step${i}Title`);
+                const descElem = document.getElementById(`step${i}Desc`);
+                const data = stepsData[i - 1];
+
+                titleElem.textContent = data.title;
+                descElem.textContent = data.desc;
+
+                // Staggered glow animation highlight
+                setTimeout(() => {
+                    stepElem.classList.add('flow-step-active');
+                    setTimeout(() => {
+                        stepElem.classList.remove('flow-step-active');
+                    }, 1200);
+                }, (i - 1) * 200);
+            }
+        }
+
+        function toggleAutoPlay() {
+            isAutoPlaying = !isAutoPlaying;
+            const btn = document.getElementById('btnAutoPlay');
+            const icon = document.getElementById('autoPlayIcon');
+            const text = document.getElementById('autoPlayText');
+
+            if (isAutoPlaying) {
+                btn.className = "w-full sm:w-auto bg-amber-500 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 border-2 border-amber-300";
+                icon.className = "fa-solid fa-pause text-white";
+                text.textContent = "Berhenti Loop";
+
+                autoPlayTimer = setInterval(() => {
+                    triggerState(currentState === 'inhale' ? 'exhale' : 'inhale');
+                }, 3500);
+            } else {
+                btn.className = "w-full sm:w-auto bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-3 px-4 rounded-2xl border border-amber-300 transition-all flex items-center justify-center gap-2";
+                icon.className = "fa-solid fa-play text-amber-600";
+                text.textContent = "Otomatis Loop";
+                clearInterval(autoPlayTimer);
+            }
+        }
+
+        // Voice speech synthesis for learning accessibility
+        function speakCurrentState() {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // stop existing speech
+
+            const stateText = currentState === 'inhale' ? 'Inspirasi. Udara Masuk.' : 'Ekspirasi. Udara Keluar.';
+            const tabText = currentTab === 'chest' ? 'Pernapasan Dada.' : 'Pernapasan Perut.';
+            const noteText = document.getElementById('organFocusNote').textContent;
+
+            const utterance = new SpeechSynthesisUtterance(`${tabText} ${stateText} ${noteText}`);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function toggleAudioSpeech() {
+            audioEnabled = !audioEnabled;
+            const btnText = document.getElementById('audioBtnText');
+            const btn = document.getElementById('audioToggleBtn');
+
+            if (audioEnabled) {
+                btnText.textContent = "Suara: AKTIF";
+                btn.className = "flex items-center gap-2 bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm transition-all border border-emerald-200";
+                speakCurrentState();
+            } else {
+                btnText.textContent = "Suara: MATI";
+                btn.className = "flex items-center gap-2 bg-slate-100 text-slate-500 px-3 py-1.5 rounded-xl font-bold text-xs md:text-sm transition-all border border-slate-200";
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function checkAnswer(questionNum, option, buttonElem) {
+            if (userAnswers[questionNum]) return; // prevent re-answering
+
+            userAnswers[questionNum] = option;
+            const isCorrect = (option === quizAnswers[questionNum]);
+            const feedbackElem = document.getElementById(`feedback-${questionNum}`);
+
+            // Style options in this question
+            const parentCard = buttonElem.closest('.quiz-card');
+            const allButtons = parentCard.querySelectorAll('.opt-btn');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                buttonElem.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                feedbackElem.className = "text-xs p-3 rounded-xl font-semibold bg-emerald-100 text-emerald-800 flex items-center gap-2 mt-2";
+                feedbackElem.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-base"></i> Benar Sekali! Jawaban kamu tepat.`;
+                score++;
+            } else {
+                buttonElem.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                feedbackElem.className = "text-xs p-3 rounded-xl font-semibold bg-rose-100 text-rose-800 flex items-center gap-2 mt-2";
+                feedbackElem.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-base"></i> Kurang Tepat. Jawaban benar adalah pilihan ${quizAnswers[questionNum]}.`;
+            }
+
+            feedbackElem.classList.remove('hidden');
+            document.getElementById('quizScoreDisplay').textContent = `${score} / 3`;
+
+            // Check if all answered
+            if (Object.keys(userAnswers).length === 3) {
+                setTimeout(showQuizResult, 600);
+            }
+        }
+
+        function showQuizResult() {
+            const resultBox = document.getElementById('quizResultBox');
+            const resultText = document.getElementById('resultText');
+            resultBox.classList.remove('hidden');
+
+            if (score === 3) {
+                resultText.textContent = "Luar biasa! Kamu mendapatkan nilai sempurna (3/3). Kamu sudah sangat paham mekanisme pernapasan dada dan perut!";
+            } else if (score === 2) {
+                resultText.textContent = "Bagus sekali! Kamu menjawab 2 dari 3 soal dengan benar. Coba tinjau lagi modul simulasi di atas!";
+            } else {
+                resultText.textContent = "Tetap semangat! Kamu bisa mencoba ulang simulasi dan kuis untuk memperdalam pemahamanmu.";
+            }
+
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            score = 0;
+            document.getElementById('quizScoreDisplay').textContent = "0 / 3";
+            document.getElementById('quizResultBox').classList.add('hidden');
+
+            for (let i = 1; i <= 3; i++) {
+                const feedbackElem = document.getElementById(`feedback-${i}`);
+                feedbackElem.classList.add('hidden');
+
+                const card = feedbackElem.closest('.quiz-card');
+                const buttons = card.querySelectorAll('.opt-btn');
+                buttons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.className = "opt-btn text-left p-3 rounded-xl border border-slate-200 hover:bg-sky-50 font-medium text-xs md:text-sm transition-all";
+                });
+            }
+        }
+
+        window.onload = function() {
+            // Initial setup
+            switchTab('chest');
+            triggerState('inhale');
+        };
+    </script>
+</body>
+</html>
